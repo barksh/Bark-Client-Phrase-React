@@ -1,0 +1,47 @@
+{
+  "name": "@barksh/client-phrase-react",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "cross-env NODE_OPTIONS=--openssl-legacy-provider start-storybook -p 6006",
+    "build": "cross-env NODE_OPTIONS=--openssl-legacy-provider build-storybook"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.20.5",
+    "@storybook/addon-actions": "^6.5.14",
+    "@storybook/addon-essentials": "^6.5.14",
+    "@storybook/addon-interactions": "^6.5.14",
+    "@storybook/addon-links": "^6.5.14",
+    "@storybook/builder-vite": "^0.4.0",
+    "@storybook/react": "^6.5.14",
+    "@storybook/testing-library": "^0.0.13",
+    "@sudoo/react-force": "^2.0.0",
+    "@sudoo/react-force-dev": "^2.0.0",
+    "@sudoo/triforce": "^3.10.1",
+    "@types/react": "^18.0.26",
+    "@types/react-dom": "^18.0.9",
+    "@types/styled-components": "^5.1.26",
+    "@vitejs/plugin-react": "^3.0.0",
+    "babel-loader": "^9.1.0",
+    "cross-env": "^7.0.3",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.9.3",
+    "vite": "^4.0.0"
+  },
+  "nyc": {
+    "extension": [
+      ".ts",
+      ".tsx"
+    ],
+    "include": [
+      "src/**/*.ts",
+      "src/**/*.tsx"
+    ],
+    "instrument": true,
+    "reporter": [
+      "json",
+      "text-summary"
+    ],
+    "report-dir": "coverage",
+    "sourceMap": true
+  }
+}
