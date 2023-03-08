@@ -9,8 +9,5 @@
     ],
     "eslint.options": {
         "overrideConfigFile": "./typescript/.eslintrc.json"
-    },
-    "yaml.schemas": {
-        "https://json.schemastore.org/github-workflow.json": "file:///Volumes/SN850/Git/Bark-Design-React/.github/workflows/deploy.yml"
     }
 }
