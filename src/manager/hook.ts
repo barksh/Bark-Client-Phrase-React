@@ -5,6 +5,9 @@
  */
 
 import { LOCALE } from "@sudoo/locale";
+import * as React from "react";
+import { PhraseCache } from "../cache/cache";
+import { PhraseCacheResult, PHRASE_CACHE_MISS_SYMBOL, PHRASE_CACHE_NULL_SYMBOL } from "../cache/declare";
 import { getPhrasesProxy } from "../proxy/phrase-get";
 
 export class PhraseHookManager {
@@ -41,24 +44,93 @@ export class PhraseHookManager {
         phrases: string[],
     ): Record<string, string> {
 
-        this._requestPhrases(phrases);
+        const [result, setResult] = React.useState<Record<string, string>>({});
 
-        return {};
+        React.useEffect(() => {
+
+            this._getInitialPhrases(phrases)
+                .then((phraseResult: PhraseCacheResult) => {
+
+                    const stringResult = Object.keys(phraseResult).reduce((previous: Record<string, string>, current: string) => {
+
+                        const value: string | typeof PHRASE_CACHE_MISS_SYMBOL | typeof PHRASE_CACHE_NULL_SYMBOL = phraseResult[current];
+
+                        if (typeof value === 'string') {
+                            previous[current] = value;
+                        } else if (value === PHRASE_CACHE_MISS_SYMBOL) {
+                            previous[current] = current;
+                        } else if (value === PHRASE_CACHE_NULL_SYMBOL) {
+                            previous[current] = current;
+                        }
+                        return previous;
+                    }, {});
+
+                    setResult(stringResult);
+                });
+        }, []);
+
+        return result;
+    }
+
+    private async _getInitialPhrases(
+        phrases: string[],
+    ): Promise<PhraseCacheResult> {
+
+        const result: PhraseCacheResult = {};
+
+        const cache: PhraseCache = PhraseCache.getInstance();
+        const cacheResult: PhraseCacheResult = cache.getPhrases(this._locale, phrases);
+
+        const toBeFetched: string[] = [];
+        for (const key of Object.keys(cacheResult)) {
+
+            const value: string | typeof PHRASE_CACHE_MISS_SYMBOL | typeof PHRASE_CACHE_NULL_SYMBOL = cacheResult[key];
+            result[key] = value;
+
+            if (value === PHRASE_CACHE_MISS_SYMBOL) {
+                toBeFetched.push(key);
+            }
+        }
+
+        if (toBeFetched.length > 0) {
+
+            const requestPhrases: Record<string, string | null> = await this._requestPhrases(toBeFetched);
+            cache.putPhrases(this._locale, requestPhrases);
+
+            for (const key of Object.keys(requestPhrases)) {
+
+                const value: string | null = requestPhrases[key];
+                if (value) {
+                    result[key] = value;
+                } else {
+                    result[key] = PHRASE_CACHE_NULL_SYMBOL;
+                }
+            }
+        }
+
+        return result;
     }
 
     private async _requestPhrases(
         phrases: string[],
-    ): Promise<Record<string, string>> {
+    ): Promise<Record<string, string | null>> {
 
-        const getPhraseResult = await getPhrasesProxy(
+        const getPhraseResult: Record<string, string> = await getPhrasesProxy(
             this._phraseHost,
             this._selfDomain,
             this._locale,
             phrases,
         );
 
-        console.log(getPhraseResult);
+        return phrases.reduce((previous: Record<string, string | null>, current: string) => {
 
-        return {};
+            const phrase: string | null = getPhraseResult[current];
+            if (phrase) {
+                previous[current] = phrase;
+            } else {
+                previous[current] = null;
+            }
+            return previous;
+        }, {});
     }
 }
