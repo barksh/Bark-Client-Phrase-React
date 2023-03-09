@@ -4,4 +4,7 @@
  * @description Index
  */
 
-export * from "./hook/use-phrase";
+export * from "./manager/hook";
+export * from "./manager/phrase";
+export * from "./proxy/phrase-get";
+

@@ -9,7 +9,7 @@ import { HTTP_RESPONSE_CODE } from "@sudoo/magic";
 import { ERROR_CODE } from "../error/code";
 import { panic } from "../error/panic";
 
-export const postInquiryV1Proxy = async (
+export const getPhrasesProxy = async (
     phraseHost: string,
     selfDomain: string,
     locale: LOCALE,
