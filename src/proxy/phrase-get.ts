@@ -10,6 +10,17 @@ import { ERROR_CODE } from "../error/code";
 import { panic } from "../error/panic";
 import { fixURL } from "./url";
 
+export type GetPhraseProxyResponsePhraseElement = {
+
+    readonly identifier: string;
+    readonly content: string;
+};
+
+export type GetPhraseProxyResponse = {
+
+    readonly phrases: GetPhraseProxyResponsePhraseElement[];
+};
+
 export const getPhrasesProxy = async (
     phraseHost: string,
     selfDomain: string,
@@ -45,5 +56,15 @@ export const getPhrasesProxy = async (
         );
     }
 
-    return await response.json();
+    const jsonResponse: GetPhraseProxyResponse = await response.json();
+    return jsonResponse.phrases.reduce((
+        previous: Record<string, string>,
+        current: GetPhraseProxyResponsePhraseElement,
+    ) => {
+
+        return {
+            ...previous,
+            [current.identifier]: current.content,
+        };
+    }, {});
 };

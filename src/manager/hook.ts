@@ -94,7 +94,8 @@ export class PhraseHookManager {
 
         if (toBeFetched.length > 0) {
 
-            const requestPhrases: Record<string, string | null> = await this._requestPhrases(toBeFetched);
+            const requestPhrases: Record<string, string | null> =
+                await this._requestPhrases(toBeFetched);
             cache.putPhrases(this._locale, requestPhrases);
 
             for (const key of Object.keys(requestPhrases)) {
@@ -115,6 +116,7 @@ export class PhraseHookManager {
         phrases: string[],
     ): Promise<Record<string, string | null>> {
 
+        console.log('[Bark-Client-Phrase-React] request remote for phrases', phrases);
         const getPhraseResult: Record<string, string> = await getPhrasesProxy(
             this._phraseHost,
             this._selfDomain,
@@ -122,15 +124,22 @@ export class PhraseHookManager {
             phrases,
         );
 
-        return phrases.reduce((previous: Record<string, string | null>, current: string) => {
+        return phrases.reduce((
+            previous: Record<string, string | null>,
+            current: string,
+        ) => {
 
             const phrase: string | null = getPhraseResult[current];
-            if (phrase) {
-                previous[current] = phrase;
-            } else {
-                previous[current] = null;
+            if (typeof phrase === 'string') {
+                return {
+                    ...previous,
+                    [current]: phrase,
+                };
             }
-            return previous;
+            return {
+                ...previous,
+                [current]: null,
+            };
         }, {});
     }
 }
