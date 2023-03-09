@@ -5,19 +5,30 @@
  * @override Story
  */
 
-import { usePhrase } from "../src";
+import { LOCALE } from "@sudoo/locale";
+import { PhraseManager } from "../src";
 
 export default {
   title: "Use Phrase",
 };
 
+const phraseManager: PhraseManager = PhraseManager.fromDomains(
+  "phrase.module.bark.sh",
+  "intersection.bark.sh",
+);
+
+const hooks = phraseManager.forLocale(LOCALE.ENGLISH_UNITED_STATES);
+
 const Template = () => {
 
-  const phrase: string = usePhrase();
+  const phrase: Record<string, string> = hooks.usePhrases([
+    "test",
+    "test2",
+  ]);
 
   return (
     <div>
-      {phrase}
+      {JSON.stringify(phrase, null, 2)}
     </div>);
 };
 

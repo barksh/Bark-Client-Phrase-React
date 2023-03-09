@@ -5,6 +5,10 @@
     "dev": "cross-env NODE_OPTIONS=--openssl-legacy-provider start-storybook -p 6006",
     "build": "cross-env NODE_OPTIONS=--openssl-legacy-provider build-storybook"
   },
+  "dependencies": {
+    "@sudoo/locale": "^1.0.1",
+    "connor": "^2.8.0"
+  },
   "devDependencies": {
     "@babel/core": "^7.20.5",
     "@storybook/addon-actions": "^6.5.14",
@@ -43,10 +47,5 @@
     ],
     "report-dir": "coverage",
     "sourceMap": true
-  },
-  "dependencies": {
-    "@sudoo/locale": "^1.0.0",
-    "@sudoo/magic": "^1.9.0",
-    "connor": "^2.8.0"
   }
 }

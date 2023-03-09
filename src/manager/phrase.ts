@@ -4,6 +4,9 @@
  * @description Phrase
  */
 
+import { LOCALE } from "@sudoo/locale";
+import { PhraseHookManager } from "./hook";
+
 export class PhraseManager {
 
     public static fromDomains(
@@ -24,5 +27,14 @@ export class PhraseManager {
 
         this._phraseHost = phraseHost;
         this._selfDomain = selfDomain;
+    }
+
+    public forLocale(locale: LOCALE): PhraseHookManager {
+
+        return PhraseHookManager.fromDomainAndLocale(
+            this._phraseHost,
+            this._selfDomain,
+            locale,
+        );
     }
 }
