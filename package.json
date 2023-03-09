@@ -43,5 +43,10 @@
     ],
     "report-dir": "coverage",
     "sourceMap": true
+  },
+  "dependencies": {
+    "@sudoo/locale": "^1.0.0",
+    "@sudoo/magic": "^1.9.0",
+    "connor": "^2.8.0"
   }
 }
