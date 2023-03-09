@@ -5,6 +5,7 @@
  * @override Story
  */
 
+import { ComponentStory } from "@storybook/react";
 import { LOCALE } from "@sudoo/locale";
 import { PhraseManager } from "../src";
 
@@ -14,17 +15,16 @@ export default {
 
 const phraseManager: PhraseManager = PhraseManager.fromDomains(
   "phrase.module.bark.sh",
-  "intersection.bark.sh",
+  "react.phrase.client.bark.sh",
 );
 
 const hooks = phraseManager.forLocale(LOCALE.ENGLISH_UNITED_STATES);
 
-const Template = () => {
+const Template: ComponentStory<any> = (args: any) => {
 
-  const phrase: Record<string, string> = hooks.usePhrases([
-    "test",
-    "test2",
-  ]);
+  const phrase: Record<string, string> = hooks.usePhrases(
+    args.phrases,
+  );
 
   return (
     <div>
@@ -33,3 +33,7 @@ const Template = () => {
 };
 
 export const Primary = Template.bind({});
+
+Primary.args = {
+  phrases: ["test", "test2"],
+};

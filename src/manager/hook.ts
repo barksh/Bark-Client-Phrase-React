@@ -58,16 +58,16 @@ export class PhraseHookManager {
                         if (typeof value === 'string') {
                             previous[current] = value;
                         } else if (value === PHRASE_CACHE_MISS_SYMBOL) {
-                            previous[current] = current;
+                            previous[current] = `[${current}]`;
                         } else if (value === PHRASE_CACHE_NULL_SYMBOL) {
-                            previous[current] = current;
+                            previous[current] = `[${current}]`;
                         }
                         return previous;
                     }, {});
 
                     setResult(stringResult);
                 });
-        }, []);
+        }, [phrases.join(',')]);
 
         return result;
     }
