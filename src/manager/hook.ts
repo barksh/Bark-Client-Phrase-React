@@ -9,6 +9,7 @@ import * as React from "react";
 import { PhraseCache } from "../cache/cache";
 import { PhraseCacheResult, PHRASE_CACHE_MISS_SYMBOL, PHRASE_CACHE_NULL_SYMBOL } from "../cache/declare";
 import { getPhrasesProxy } from "../proxy/phrase-get";
+import { DynamicHandlerStatus, PhraseDynamicHandler } from "./dynamic-handler";
 
 export class PhraseHookManager {
 
@@ -38,6 +39,24 @@ export class PhraseHookManager {
         this._phraseHost = phraseHost;
         this._selfDomain = selfDomain;
         this._locale = locale;
+    }
+
+    public usePhrases<T extends string = string>(): PhraseDynamicHandler<T> {
+
+        const handlerRef: React.MutableRefObject<PhraseDynamicHandler<T>> = React.useRef<PhraseDynamicHandler<T>>(null as any);
+
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const [_, setStatus] = React.useState<DynamicHandlerStatus>(DynamicHandlerStatus.IDLE);
+
+        React.useEffect(() => {
+
+            handlerRef.current = PhraseDynamicHandler.create(
+                this._requestPhrases.bind(this),
+                setStatus,
+            );
+        }, []);
+
+        return handlerRef.current;
     }
 
     public useFixedPhrases<T extends string = string>(
