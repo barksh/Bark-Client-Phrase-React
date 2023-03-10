@@ -40,9 +40,9 @@ export class PhraseHookManager {
         this._locale = locale;
     }
 
-    public useFixedPhrases(
-        phrases: string[],
-    ): Record<string, string> {
+    public useFixedPhrases<T extends string = string>(
+        phrases: T[],
+    ): Record<T, string> {
 
         const [result, setResult] = React.useState<Record<string, string>>({});
 
@@ -51,19 +51,26 @@ export class PhraseHookManager {
             this._getInitialPhrases(phrases)
                 .then((phraseResult: PhraseCacheResult) => {
 
-                    const stringResult = Object.keys(phraseResult).reduce((previous: Record<string, string>, current: string) => {
+                    const stringResult: Record<string, string> =
+                        Object.keys(phraseResult).reduce((
+                            previous: Record<string, string>,
+                            current: string,
+                        ) => {
 
-                        const value: string | typeof PHRASE_CACHE_MISS_SYMBOL | typeof PHRASE_CACHE_NULL_SYMBOL = phraseResult[current];
+                            const value: string
+                                | typeof PHRASE_CACHE_MISS_SYMBOL
+                                | typeof PHRASE_CACHE_NULL_SYMBOL =
+                                phraseResult[current];
 
-                        if (typeof value === 'string') {
-                            previous[current] = value;
-                        } else if (value === PHRASE_CACHE_MISS_SYMBOL) {
-                            previous[current] = `[${current}]`;
-                        } else if (value === PHRASE_CACHE_NULL_SYMBOL) {
-                            previous[current] = `[${current}]`;
-                        }
-                        return previous;
-                    }, {});
+                            if (typeof value === 'string') {
+                                previous[current] = value;
+                            } else if (value === PHRASE_CACHE_MISS_SYMBOL) {
+                                previous[current] = `[${current}]`;
+                            } else if (value === PHRASE_CACHE_NULL_SYMBOL) {
+                                previous[current] = `[${current}]`;
+                            }
+                            return previous;
+                        }, {});
 
                     setResult(stringResult);
                 });
