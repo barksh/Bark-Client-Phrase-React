@@ -61,6 +61,7 @@ export class PhraseHookManager {
         React.useEffect(() => {
 
             handlerRef.current = PhraseDynamicHandler.create(
+                this._locale,
                 this._requestPhrases.bind(this),
                 setStatus,
             );
@@ -132,7 +133,11 @@ export class PhraseHookManager {
         const toBeFetched: string[] = [];
         for (const key of Object.keys(cacheResult)) {
 
-            const value: string | typeof PHRASE_CACHE_MISS_SYMBOL | typeof PHRASE_CACHE_NULL_SYMBOL = cacheResult[key];
+            const value: string
+                | typeof PHRASE_CACHE_MISS_SYMBOL
+                | typeof PHRASE_CACHE_NULL_SYMBOL =
+                cacheResult[key];
+
             result[key] = value;
 
             if (value === PHRASE_CACHE_MISS_SYMBOL) {

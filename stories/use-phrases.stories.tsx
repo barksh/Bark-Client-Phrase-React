@@ -10,6 +10,8 @@ import { LOCALE } from "@sudoo/locale";
 import { PhraseManager } from "../src";
 import { DynamicHandlerStatus } from "../src/manager/dynamic-handler";
 
+const localStorageKey: string = '_bark-client-phrase-react-cache';
+
 export default {
     title: "Use Phrases",
 };
@@ -39,6 +41,7 @@ const Template: ComponentStory<any> = (args: any) => {
             })}
             <div>Status: {phrase.status}</div>
             <div>Phrases: {JSON.stringify([...(phrase.handler as any)._phrases.keys()])}</div>
+            <div>Storage: {JSON.stringify(localStorage.getItem(localStorageKey))}</div>
         </div>);
 };
 

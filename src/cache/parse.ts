@@ -4,7 +4,7 @@
  * @description Parse
  */
 
-import { LOCALE, verifyLocale } from "@sudoo/locale";
+import { verifyLocale } from "@sudoo/locale";
 import { PhraseCacheMap, PhraseCacheMapLocale, PhraseLocalStorageCache, PhraseLocalStorageCachePhrase } from "./declare";
 
 export const parsePhraseStorageCachePhraseToMap = (
@@ -38,7 +38,7 @@ export const parsePhraseStorageCacheToMap = (
             cache[locale] as PhraseLocalStorageCachePhrase[];
 
         const localeMap: PhraseCacheMapLocale = parsePhraseStorageCachePhraseToMap(phrases);
-        map.set(locale as LOCALE, localeMap);
+        map.set(locale, localeMap);
     }
     return map;
 };

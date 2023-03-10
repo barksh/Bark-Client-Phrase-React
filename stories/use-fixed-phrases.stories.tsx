@@ -9,6 +9,8 @@ import { ComponentStory } from "@storybook/react";
 import { LOCALE } from "@sudoo/locale";
 import { PhraseManager } from "../src";
 
+const localStorageKey: string = '_bark-client-phrase-react-cache';
+
 export default {
   title: "Use Fixed Phrases",
 };
@@ -29,6 +31,7 @@ const Template: ComponentStory<any> = (args: any) => {
   return (
     <div>
       {JSON.stringify(phrase, null, 2)}
+      <div>Storage: {JSON.stringify(localStorage.getItem(localStorageKey))}</div>
     </div>);
 };
 

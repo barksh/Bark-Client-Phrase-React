@@ -4,7 +4,9 @@
  * @description Dynamic Handler
  */
 
-import { PHRASE_CACHE_NULL_SYMBOL } from "../cache/declare";
+import { LOCALE } from "@sudoo/locale";
+import { PhraseCache } from "../cache/cache";
+import { PhraseCacheResult, PhraseCacheResultValue, PHRASE_CACHE_MISS_SYMBOL, PHRASE_CACHE_NULL_SYMBOL } from "../cache/declare";
 
 export enum DynamicHandlerStatus {
 
@@ -17,28 +19,36 @@ export enum DynamicHandlerStatus {
 export class PhraseDynamicHandler<T extends string = string> {
 
     public static create<T extends string = string>(
+        locale: LOCALE,
         requestPhrases: (phrases: string[]) => Promise<Record<string, string | null>>,
         setStatus: (status: DynamicHandlerStatus) => void,
     ): PhraseDynamicHandler<T> {
 
-        return new PhraseDynamicHandler<T>(requestPhrases, setStatus);
+        return new PhraseDynamicHandler<T>(locale, requestPhrases, setStatus);
     }
 
+    private readonly _locale: LOCALE;
     private readonly _requestPhrases: (phrases: string[]) => Promise<Record<string, string | null>>;
     private readonly _setStatus: (status: DynamicHandlerStatus) => void;
 
     private _timer: any;
+    private _queueing: boolean;
 
     private readonly _phrases: Map<T, string | typeof PHRASE_CACHE_NULL_SYMBOL>;
     private readonly _phraseQueue: Set<T>;
 
     private constructor(
+        locale: LOCALE,
         requestPhrases: (phrases: string[]) => Promise<Record<string, string | null>>,
         setStatus: (status: DynamicHandlerStatus) => void,
     ) {
 
+        this._locale = locale;
         this._requestPhrases = requestPhrases;
         this._setStatus = setStatus;
+
+        this._timer = null;
+        this._queueing = false;
 
         this._phrases = new Map<T, string | typeof PHRASE_CACHE_NULL_SYMBOL>();
         this._phraseQueue = new Set<T>();
@@ -80,6 +90,10 @@ export class PhraseDynamicHandler<T extends string = string> {
 
     private _scheduleRequest(): void {
 
+        if (this._queueing) {
+            return;
+        }
+
         this._setStatus(DynamicHandlerStatus.QUEUEING);
 
         clearTimeout(this._timer);
@@ -88,25 +102,69 @@ export class PhraseDynamicHandler<T extends string = string> {
 
             this._setStatus(DynamicHandlerStatus.REQUESTING);
 
-            const result: Record<string, string | null> = await this._requestPhrases([...this._phraseQueue]);
+            const result: PhraseCacheResult = {};
+
+            const requestQueue: string[] = [...this._phraseQueue];
+
+            const cache: PhraseCache = PhraseCache.getInstance();
+            const cacheResult: PhraseCacheResult =
+                cache.getPhrases(this._locale, requestQueue);
+
+
+            const toBeFetched: string[] = [];
+            for (const key of Object.keys(cacheResult)) {
+
+                const value: string
+                    | typeof PHRASE_CACHE_MISS_SYMBOL
+                    | typeof PHRASE_CACHE_NULL_SYMBOL =
+                    cacheResult[key];
+
+                result[key] = value;
+
+                if (value === PHRASE_CACHE_MISS_SYMBOL) {
+                    toBeFetched.push(key);
+                }
+            }
+
+            if (toBeFetched.length > 0) {
+
+                const requestPhrases: Record<string, string | null> =
+                    await this._requestPhrases(toBeFetched);
+                cache.putPhrases(this._locale, requestPhrases);
+
+                for (const key of Object.keys(requestPhrases)) {
+
+                    const value: string | null = requestPhrases[key];
+                    if (value) {
+                        result[key] = value;
+                    } else {
+                        result[key] = PHRASE_CACHE_NULL_SYMBOL;
+                    }
+                }
+            }
 
             this._phraseQueue.clear();
 
             for (const key of Object.keys(result)) {
 
-                const phrase: string | null = result[key];
+                const phrase: PhraseCacheResultValue = result[key];
 
-                if (phrase) {
+                if (typeof phrase === 'string') {
                     this._phrases.set(key as T, phrase);
-                } else {
-                    this._phrases.set(key as T, PHRASE_CACHE_NULL_SYMBOL);
+                } else if (phrase === PHRASE_CACHE_MISS_SYMBOL) {
+                    this._phrases.set(key as T, `[${key}]`);
+                } else if (phrase === PHRASE_CACHE_NULL_SYMBOL) {
+                    this._phrases.set(key as T, `[${key}]`);
                 }
             }
 
             this._setStatus(DynamicHandlerStatus.IDLE);
+            this._queueing = false;
         };
 
         this._timer = setTimeout(() => {
+
+            this._queueing = true;
             timeoutMethod();
         }, 256);
     }
