@@ -7,6 +7,8 @@
 import { PHRASE_CACHE_NULL_SYMBOL } from "../cache/declare";
 
 export enum DynamicHandlerStatus {
+
+    PENDING = "PENDING",
     IDLE = "IDLE",
     QUEUEING = "QUEUEING",
     REQUESTING = "REQUESTING",
@@ -46,8 +48,10 @@ export class PhraseDynamicHandler<T extends string = string> {
 
         if (this._phrases.has(identifier)) {
 
-            const phrase: string | typeof PHRASE_CACHE_NULL_SYMBOL =
-                this._phrases.get(identifier) as string | typeof PHRASE_CACHE_NULL_SYMBOL;
+            const phrase: string
+                | typeof PHRASE_CACHE_NULL_SYMBOL =
+                this._phrases.get(identifier) as string
+                | typeof PHRASE_CACHE_NULL_SYMBOL;
 
             if (phrase === PHRASE_CACHE_NULL_SYMBOL) {
                 return `[${identifier}]`;

@@ -11,6 +11,16 @@ import { PhraseCacheResult, PHRASE_CACHE_MISS_SYMBOL, PHRASE_CACHE_NULL_SYMBOL }
 import { getPhrasesProxy } from "../proxy/phrase-get";
 import { DynamicHandlerStatus, PhraseDynamicHandler } from "./dynamic-handler";
 
+export type UsePhraseHookResult<T extends string = string> = {
+
+    readonly status: Exclude<DynamicHandlerStatus, DynamicHandlerStatus.PENDING>;
+    readonly handler: PhraseDynamicHandler<T>;
+} | {
+
+    readonly status: DynamicHandlerStatus.PENDING;
+    readonly handler: null;
+};
+
 export class PhraseHookManager {
 
     public static fromDomainAndLocale(
@@ -41,12 +51,12 @@ export class PhraseHookManager {
         this._locale = locale;
     }
 
-    public usePhrases<T extends string = string>(): PhraseDynamicHandler<T> {
+    public usePhrases<T extends string = string>(): UsePhraseHookResult<T> {
 
-        const handlerRef: React.MutableRefObject<PhraseDynamicHandler<T>> = React.useRef<PhraseDynamicHandler<T>>(null as any);
+        const handlerRef: React.MutableRefObject<PhraseDynamicHandler<T>> =
+            React.useRef<PhraseDynamicHandler<T>>(null as any);
 
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const [_, setStatus] = React.useState<DynamicHandlerStatus>(DynamicHandlerStatus.IDLE);
+        const [status, setStatus] = React.useState<DynamicHandlerStatus>(DynamicHandlerStatus.PENDING);
 
         React.useEffect(() => {
 
@@ -54,9 +64,21 @@ export class PhraseHookManager {
                 this._requestPhrases.bind(this),
                 setStatus,
             );
+
+            setStatus(DynamicHandlerStatus.IDLE);
         }, []);
 
-        return handlerRef.current;
+        if (!handlerRef.current) {
+            return {
+                status: DynamicHandlerStatus.PENDING,
+                handler: null,
+            };
+        }
+
+        return {
+            status: status as Exclude<DynamicHandlerStatus, DynamicHandlerStatus.PENDING>,
+            handler: handlerRef.current,
+        };
     }
 
     public useFixedPhrases<T extends string = string>(

@@ -8,7 +8,7 @@
 import { ComponentStory } from "@storybook/react";
 import { LOCALE } from "@sudoo/locale";
 import { PhraseManager } from "../src";
-import { PhraseDynamicHandler } from "../src/manager/dynamic-handler";
+import { DynamicHandlerStatus } from "../src/manager/dynamic-handler";
 
 export default {
     title: "Use Phrases",
@@ -23,17 +23,22 @@ const hooks = phraseManager.forLocale(LOCALE.ENGLISH_UNITED_STATES);
 
 const Template: ComponentStory<any> = (args: any) => {
 
-    const phrase: PhraseDynamicHandler = hooks.usePhrases();
+    const phrase = hooks.usePhrases();
+
+    if (phrase.status === DynamicHandlerStatus.PENDING) {
+        return (<div>Loading...</div>);
+    }
 
     return (
         <div>
             {args.phrases.map((phraseKey: string) => {
 
                 return (<div key={phraseKey}>
-                    {phraseKey}: {phrase.get(phraseKey)}
+                    {phraseKey}: {phrase.handler.get(phraseKey)}
                 </div>);
             })}
-            {JSON.stringify(phrase, null, 2)}
+            <div>Status: {phrase.status}</div>
+            <div>Phrases: {JSON.stringify([...(phrase.handler as any)._phrases.keys()])}</div>
         </div>);
 };
 
