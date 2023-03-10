@@ -1,7 +1,7 @@
 /**
  * @author WMXPY
- * @namespace UsePhrase
- * @description Use Phrase
+ * @namespace Stories
+ * @description Use Fixed Phrases
  * @override Story
  */
 
@@ -10,7 +10,7 @@ import { LOCALE } from "@sudoo/locale";
 import { PhraseManager } from "../src";
 
 export default {
-  title: "Use Phrase",
+  title: "Use Fixed Phrases",
 };
 
 const phraseManager: PhraseManager = PhraseManager.fromDomains(
@@ -22,7 +22,7 @@ const hooks = phraseManager.forLocale(LOCALE.ENGLISH_UNITED_STATES);
 
 const Template: ComponentStory<any> = (args: any) => {
 
-  const phrase: Record<string, string> = hooks.usePhrases(
+  const phrase: Record<string, string> = hooks.useFixedPhrases(
     args.phrases,
   );
 

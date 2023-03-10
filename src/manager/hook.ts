@@ -40,7 +40,7 @@ export class PhraseHookManager {
         this._locale = locale;
     }
 
-    public usePhrases(
+    public useFixedPhrases(
         phrases: string[],
     ): Record<string, string> {
 
