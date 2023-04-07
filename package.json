@@ -2,8 +2,8 @@
   "name": "@barksh/client-phrase-react",
   "version": "1.0.0",
   "scripts": {
-    "dev": "cross-env NODE_OPTIONS=--openssl-legacy-provider start-storybook -p 6006",
-    "build": "cross-env NODE_OPTIONS=--openssl-legacy-provider build-storybook"
+    "dev": "cross-env NODE_OPTIONS=--openssl-legacy-provider storybook dev -p 6006",
+    "build": "cross-env NODE_OPTIONS=--openssl-legacy-provider storybook build"
   },
   "dependencies": {
     "@sudoo/locale": "^1.0.1",
@@ -16,8 +16,8 @@
     "@storybook/addon-essentials": "^7.0.2",
     "@storybook/addon-interactions": "^7.0.2",
     "@storybook/addon-links": "^7.0.2",
-    "@storybook/builder-vite": "^7.0.2",
     "@storybook/react": "^7.0.2",
+    "@storybook/react-vite": "^7.0.2",
     "@storybook/testing-library": "^0.1.0",
     "@sudoo/react-force": "^2.0.0",
     "@sudoo/react-force-dev": "^2.0.0",
@@ -28,6 +28,9 @@
     "@vitejs/plugin-react": "^3.0.0",
     "babel-loader": "^9.1.0",
     "cross-env": "^7.0.3",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "storybook": "^7.0.2",
     "ts-node": "^10.9.1",
     "typescript": "^5.0.2",
     "vite": "^4.0.0"
