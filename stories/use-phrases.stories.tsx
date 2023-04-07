@@ -5,7 +5,7 @@
  * @override Story
  */
 
-import { ComponentStory } from "@storybook/react";
+import { StoryFn } from "@storybook/react";
 import { LOCALE } from "@sudoo/locale";
 import { PhraseManager } from "../src";
 import { DynamicHandlerStatus } from "../src/manager/dynamic-handler";
@@ -23,7 +23,7 @@ const phraseManager: PhraseManager = PhraseManager.fromDomains(
 
 const hooks = phraseManager.forLocale(LOCALE.ENGLISH_UNITED_STATES);
 
-const Template: ComponentStory<any> = (args: any) => {
+const Template: StoryFn<any> = (args: any) => {
 
     const phrase = hooks.usePhrases();
 
