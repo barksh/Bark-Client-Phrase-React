@@ -27,7 +27,6 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           architecture: ${{ matrix.architecture }}
-          cache: "yarn"
       - name: Install Dependencies
         run: |
           npm install @sudoo/build-cli -g
