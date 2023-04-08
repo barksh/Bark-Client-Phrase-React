@@ -38,8 +38,6 @@ jobs:
       - name: Build Storybook
         run: |
           yarn run build
-        env:
-          NODE_OPTIONS: --max-old-space-size=6144
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
