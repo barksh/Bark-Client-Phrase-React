@@ -18,7 +18,7 @@
     "@storybook/addon-links": "^7.0.2",
     "@storybook/react": "^7.0.2",
     "@storybook/react-vite": "^7.0.2",
-    "@storybook/testing-library": "^0.1.0",
+    "@storybook/testing-library": "^0.2.1",
     "@sudoo/react-force": "^2.0.0",
     "@sudoo/react-force-dev": "^2.0.0",
     "@sudoo/triforce": "^3.10.1",
